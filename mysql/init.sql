@@ -1,0 +1,3 @@
+CREATE USER IF NOT EXISTS 'vwarden'@'%' IDENTIFIED BY 'Mj1++/7+4VC7FTTQhZRb2GBxecZDpt80';
+CREATE DATABASE IF NOT EXISTS vaultwarden;
+GRANT ALL PRIVILEGES ON vaultwarden.* TO 'vwarden'@'%';

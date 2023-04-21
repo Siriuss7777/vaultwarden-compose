@@ -1,0 +1,63 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql
+    container_name: mysql
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    env_file: ./mysql/mysql.env
+    command: ["--init-file", "/docker-entrypoint-initdb.d/init.sql"]
+    healthcheck:
+      test: "mysqladmin ping -h localhost -u root --password=$$MYSQL_ROOT_PASSWORD"
+      timeout: 3s
+      retries: 5
+    networks:
+      vaultwarden:
+        ipv4_address: "172.18.0.2"
+    restart: unless-stopped
+
+  vaultwarden-server:
+    container_name: vaultwarden-server
+    build: ./vaultwarden
+    ports:
+      - "8000:8000"
+      - "3012:3012"
+    env_file:
+      - ./vaultwarden/vaultwarden.env
+      - ./common.conf
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./vaultwarden/data:/data
+    networks:
+      - vaultwarden
+    restart: unless-stopped
+    networks:
+      vaultwarden:
+        ipv4_address: "172.18.0.3"
+
+  apache2:
+    container_name: apache2
+    build: ./apache2
+    env_file: ./common.conf
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./apache2/sites-available/:/etc/apache2/sites-available
+      - ./apache2/keys:/etc/apache2/keys
+      - ./vaultwarden/web-vault:/var/www/web-vault
+      - ./apache2/apache2.conf:/etc/apache2/apache2.conf
+    networks:
+      vaultwarden:
+        ipv4_address: "172.18.0.4"
+
+networks:
+  vaultwarden:
+    name: vaultwarden
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.18.0.0/29"
