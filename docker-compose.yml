@@ -17,8 +17,8 @@ services:
         ipv4_address: "172.18.0.2"
     restart: unless-stopped
 
-  vaultwarden-server:
-    container_name: vaultwarden-server
+  vaultwarden:
+    container_name: vaultwarden
     build: ./vaultwarden
     ports:
       - "8000:8000"
