@@ -1,11 +1,11 @@
 FROM ubuntu
 
 # Mise à jour des paquets
-RUN apt update -y && \
+RUN DEBIAN_FRONTEND=noninteractive apt update -y && \
 	apt upgrade -y
 
 # Installation des paquets nécessaires au fonctionnement du serveur Vaultwarden
-RUN apt install \
+RUN DEBIAN_FRONTEND=noninteractive apt install \
 	libmysqlclient-dev \
 	pkg-config \
 	libssl-dev \
