@@ -1,11 +1,11 @@
 FROM ubuntu
 
 # Mise à jour des paquets
-RUN apt update -y && \
+RUN DEBIAN_FRONTEND=noninteractive apt update -y && \
 	apt upgrade -y
 
 # Installaiton du paquet apache2
-RUN apt install apache2 -y
+RUN DEBIAN_FRONTEND=noninteractive apt install apache2 -y
 
 # Activation des paquets nécessaires au fonctinnement du reverse proxy
 RUN a2enmod ssl \
